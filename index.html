@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- Política de segurança: a página só carrega o próprio código e as fontes do Google,
+     não faz requisições para outros sites e não pode ser usada para enviar formulários. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'none'; media-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Davi Felipe | Portfólio</title>
 <meta name="description" content="Portfólio de Davi Felipe, estudante de Técnico em Informática focado em cibersegurança.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -40,6 +44,11 @@ body::before{ /* grade de pixels no fundo */
 a{color:inherit}
 img,svg{max-width:100%}
 :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.skip{position:fixed;left:12px;top:-60px;z-index:300;background:var(--text);color:var(--bg);padding:10px 16px;border-radius:4px;font-weight:500;text-decoration:none;transition:top .2s}
+.skip:focus{top:12px}
+.contact .note{color:var(--muted);font-size:.85rem}
+@media (forced-colors:active){html.cur, html.cur *{cursor:auto !important}.cur-dot,.cur-ring{display:none}}
 h1,h2,h3{font-family:var(--pixel);font-weight:400;line-height:1.1;margin:0}
 p{margin:0}
 .wrap{width:min(1120px,100% - 40px);margin-inline:auto}
@@ -128,7 +137,6 @@ section{padding:clamp(56px,8vw,96px) 0;border-top:1px solid var(--line)}
   padding:24px;overflow:hidden;
   transform:perspective(800px) rotateX(var(--rx)) rotateY(var(--ry));
   transition:transform .2s ease-out, border-color .25s;
-  will-change:transform;
 }
 .card::before{
   content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .3s;
@@ -398,6 +406,61 @@ body{padding-bottom:84px}
   .ach .glyph{opacity:1;transform:none}
 }
 
+/* ---------- cursor personalizado (só em mouse/trackpad) ---------- */
+html.cur, html.cur *{cursor:none !important}
+.cur-dot,.cur-ring{position:fixed;left:0;top:0;pointer-events:none;z-index:150;will-change:transform;transition:opacity .2s}
+.cur-dot{width:6px;height:6px;margin:-3px 0 0 -3px;background:#fff;mix-blend-mode:difference;border-radius:1px;transition:opacity .2s,width .15s,height .15s,margin .15s}
+.cur-dot.card{width:14px;height:14px;margin:-7px 0 0 -7px;background:transparent;border:2px solid #fff}
+.cur-dot.aim{width:2px;height:2px;margin:-1px 0 0 -1px;background:#3dff6e;mix-blend-mode:normal}
+.cur-ring{mix-blend-mode:difference}
+.cur-ring i{position:absolute;width:7px;height:7px;border:2px solid #fff;transition:border-color .2s, opacity .2s}
+.cur-ring i:nth-child(1){left:0;top:0;border-right:0;border-bottom:0}
+.cur-ring i:nth-child(2){right:0;top:0;border-left:0;border-bottom:0}
+.cur-ring i:nth-child(3){left:0;bottom:0;border-right:0;border-top:0}
+.cur-ring i:nth-child(4){right:0;bottom:0;border-left:0;border-top:0}
+.cur-ring.card{opacity:0}
+.cur-ring.press i{border-color:var(--accent)}
+.cur-ring.aim{mix-blend-mode:normal}
+.cur-ring.aim i{opacity:0}
+.cur-ring::before,.cur-ring::after{content:"";position:absolute;opacity:0;transition:opacity .2s}
+.cur-ring::before{left:50%;top:0;bottom:0;width:2px;margin-left:-1px;background:linear-gradient(#3dff6e 0 38%,transparent 38% 62%,#3dff6e 62%)}
+.cur-ring::after{top:50%;left:0;right:0;height:2px;margin-top:-1px;background:linear-gradient(90deg,#3dff6e 0 38%,transparent 38% 62%,#3dff6e 62%)}
+.cur-ring.aim::before,.cur-ring.aim::after{opacity:1}
+.cur-dot.hide,.cur-ring.hide{opacity:0}
+
+/* faíscas de clique/toque */
+.spark{position:fixed;width:4px;height:4px;margin:-2px 0 0 -2px;background:var(--accent);z-index:149;pointer-events:none;animation:spark .45s steps(5) forwards}
+@keyframes spark{to{transform:translate(var(--dx),var(--dy));opacity:0}}
+
+/* botões magnéticos */
+.btn,.hud-sound,.win-btns button{transition:transform .12s, box-shadow .12s, translate .25s cubic-bezier(.3,1.4,.5,1), background .15s, color .15s}
+
+/* links do menu com glitch */
+.nav a:hover{animation:glitch .35s steps(2) 1}
+@keyframes glitch{
+  0%{text-shadow:-2px 0 var(--accent), 2px 0 #3dff6e;transform:translateX(1px)}
+  50%{text-shadow:2px 0 var(--accent), -2px 0 #3dff6e;transform:translateX(-1px)}
+  100%{text-shadow:none;transform:none}
+}
+
+/* tela de boot */
+.boot-screen{
+  position:fixed;inset:0;z-index:200;background:#0a0c0d;color:#cfd6db;
+  display:flex;flex-direction:column;justify-content:center;padding:clamp(24px,8vw,120px);
+}
+.boot-screen[hidden]{display:none}
+.boot-screen pre{margin:0;font:400 clamp(.85rem,2.2vw,1.05rem)/1.8 ui-monospace,"Cascadia Mono",Consolas,monospace;white-space:pre-wrap}
+.boot-screen b{font-weight:400;color:#3dff6e}
+.boot-screen small{margin-top:28px;color:var(--muted);font-size:.85rem}
+.boot-screen.bye{animation:crtOff .45s ease-in forwards}
+.cur-b{display:inline-block;width:.6em;height:1.1em;background:#cfd6db;vertical-align:text-bottom;animation:blink .8s steps(1) infinite}
+html.booting{overflow:hidden}
+
+/* chuva de código do easter egg */
+.rain{position:fixed;inset:0;z-index:60;pointer-events:none;transition:opacity .6s}
+footer .hint{flex-basis:100%;order:3}
+kbd{font:400 .85em var(--pixel);border:1px solid var(--line);border-bottom-width:2px;border-radius:3px;padding:0 5px;color:var(--text)}
+
 @media (max-width:900px){
   .hero{grid-template-columns:1fr}
   .room-card{justify-self:stretch;max-width:560px;order:-1}
@@ -419,8 +482,13 @@ body{padding-bottom:84px}
   #codeRoll{animation:none}
 }
 </style>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 11 11' shape-rendering='crispEdges'%3E%3Crect width='11' height='11' fill='%230e1113'/%3E%3Cpath fill='%239fb0bd' d='M3 1h5v1H3zM2 2h1v3H2zM8 2h1v3H8zM1 5h9v5H1z'/%3E%3Cpath fill='%230e1113' d='M5 6h1v2H5z'/%3E%3C/svg%3E">
 </head>
 <body>
+<a class="skip" href="#sobre">Pular para o conteúdo</a>
+<div class="boot-screen" id="bootScreen" aria-hidden="true" hidden><pre id="bootLog"></pre><small>Clique ou aperte qualquer tecla para pular</small></div>
+<div class="cur-dot hide" id="curDot" aria-hidden="true"></div>
+<div class="cur-ring hide" id="curRing" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 
 <header class="top">
   <div class="wrap">
@@ -447,9 +515,10 @@ body{padding-bottom:84px}
     </div>
 
     <div class="room-card">
-      <button class="room-btn" id="roomBtn" type="button" aria-label="Avatar do Davi no quarto. Toque para trocar a animação.">
+      <button class="room-btn" id="roomBtn" type="button" aria-label="Avatar do Davi no quarto. Ative para trocar a animação." aria-describedby="roomDesc">
 <canvas id="room" width="192" height="136" aria-hidden="true"></canvas>
       </button>
+      <p class="sr-only" id="roomDesc" aria-live="polite">Davi está no quarto, à noite, digitando no computador.</p>
       <div class="room-meta">
         <div>
           <div class="room-label" id="roomLabel">digitando</div>
@@ -631,7 +700,7 @@ body{padding-bottom:84px}
               <p>O que eu defendo, escrito em primeira pessoa.</p>
               <span class="open">Abrir pasta <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 11 11 3M5 3h6v6" stroke="currentColor" stroke-width="2" fill="none"/></svg></span>
             </a>
-            <a class="card proj gh boot" href="https://github.com/davifsousa2009-droid" target="_blank" rel="noopener">
+            <a class="card proj gh boot" href="https://github.com/davifsousa2009-droid" target="_blank" rel="noopener noreferrer">
               <h3>Tudo no GitHub</h3>
               <p>Códigos, testes e os próximos projetos aparecem primeiro lá.</p>
               <span class="open">github.com/davifsousa2009-droid <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 11 11 3M5 3h6v6" stroke="currentColor" stroke-width="2" fill="none"/></svg></span>
@@ -674,17 +743,18 @@ body{padding-bottom:84px}
           <div class="contact">
             <div class="card boot">
               <h3>WhatsApp</h3>
-              <span class="big">(35) 99774-0622</span>
+              <span class="big" id="phoneText">(35) 9 ••••-••••</span>
               <div class="row">
-                <a class="btn sm" href="https://wa.me/5535997740622" target="_blank" rel="noopener">Abrir conversa</a>
+                <button class="btn sm" type="button" id="showPhone">Mostrar número</button>
                 <button class="btn ghost sm" type="button" id="copyPhone">Copiar número</button>
               </div>
+              <small class="note">O número fica escondido para robôs que coletam contatos em sites.</small>
             </div>
             <div class="card boot">
               <h3>GitHub</h3>
               <span class="big">davifsousa2009-droid</span>
               <div class="row">
-                <a class="btn sm" href="https://github.com/davifsousa2009-droid" target="_blank" rel="noopener">Ver perfil</a>
+                <a class="btn sm" href="https://github.com/davifsousa2009-droid" target="_blank" rel="noopener noreferrer">Ver perfil</a>
               </div>
             </div>
           </div>
@@ -698,6 +768,7 @@ body{padding-bottom:84px}
 <footer>
   <div class="wrap">
     <span>Davi Felipe, 2026</span>
+    <span class="hint">Psiu: tente digitar <kbd>hack</kbd>. E fique de olho na janela do quarto.</span>
     <span>Feito do zero em um único index.html</span>
   </div>
 </footer>
@@ -749,7 +820,8 @@ body{padding-bottom:84px}
     nameEl.appendChild(s);
     return s;
   });
-  if (!reduce) {
+  const runScramble = () => {
+    if (reduce) return;
     let frame = 0;
     const iv = setInterval(() => {
       spans.forEach((s, i) => {
@@ -758,7 +830,43 @@ body{padding-bottom:84px}
       });
       if (++frame > finalName.length * 3 + 8) clearInterval(iv);
     }, 45);
-  }
+  };
+
+  /* ---------- tela de boot (só na primeira visita da sessão, dá pra pular) ---------- */
+  const bootEl = $('#bootScreen');
+  let firstVisit = true;
+  try { firstVisit = !sessionStorage.getItem('davi-boot'); sessionStorage.setItem('davi-boot', '1'); } catch (e) {}
+  if (firstVisit && !reduce) {
+    bootEl.hidden = false;
+    document.documentElement.classList.add('booting');
+    const hr = new Date().getHours();
+    const hi = hr < 5 ? 'Boa madrugada' : hr < 12 ? 'Bom dia' : hr < 18 ? 'Boa tarde' : 'Boa noite';
+    const lines = [
+      ['DAVI.OS v2.6  (c) 2026  Varginha, MG', ''], ['', ''],
+      ['verificando memória', 'OK'], ['carregando quarto.png', 'OK'],
+      ['conectando ao github', 'OK'], ['firewall', 'ATIVO'], ['', ''],
+      [hi + ', visitante.', '']
+    ];
+    const log = $('#bootLog');
+    let i = 0, out = '', finished = false;
+    const done = () => {
+      if (finished) return; finished = true;
+      removeEventListener('keydown', done);
+      bootEl.classList.add('bye');
+      setTimeout(() => { bootEl.remove(); document.documentElement.classList.remove('booting'); runScramble(); }, 450);
+    };
+    const step = () => {
+      if (finished) return;
+      if (i >= lines.length) return setTimeout(done, 750);
+      const [a, b] = lines[i++];
+      out += (b ? a + ' ' + '.'.repeat(Math.max(3, 26 - a.length)) + ' <b>' + b + '</b>' : a) + '\n';
+      log.innerHTML = out + '<span class="cur-b"></span>';
+      setTimeout(step, i === 1 ? 280 : 160);
+    };
+    step();
+    addEventListener('keydown', done);
+    bootEl.addEventListener('click', done);
+  } else { bootEl.remove(); runScramble(); }
 
   /* ---------- máquina de escrever ---------- */
   const typed = $('#typed');
@@ -965,7 +1073,7 @@ body{padding-bottom:84px}
 
   /* ----- personagem ----- */
   const C = 0; // deslocamento horizontal do personagem
-  const S = { frame: 'type', typing: true, turbo: false, hooded: false, screen: 'code', load: 0, hackT: 0, mood: 'normal', phones: false, aim: 0, click: false, closeT: 0, loadT: 0, gameT: 0 };
+  const S = { look: { x: -1, y: 0 }, afk: false, startle: 0, frame: 'type', typing: true, turbo: false, hooded: false, screen: 'code', load: 0, hackT: 0, mood: 'normal', phones: false, aim: 0, click: false, closeT: 0, loadT: 0, gameT: 0 };
   let tick = 0, tap = 0, scroll = 0;
   const ALIEN = { phase: null, t: 0, moodSet: false };
 
@@ -1014,7 +1122,9 @@ body{padding-bottom:84px}
     } else if (mood === 'confused') {
       R(72, 41, 4, 1, 2); P(79, 42, 2); R(80, 41, 2, 1, 2); R(82, 40, 2, 1, 2);
     } else { R(72, 42, 4, 1, 2); R(79, 42, 5, 1, 2); }
-    if (S.frame === 'drink') {
+    if (S.afk) {
+      R(72, 46, 4, 1, 1); R(79, 46, 5, 1, 1);
+    } else if (S.frame === 'drink') {
       R(72, 45, 4, 1, 1); P(72, 44, 1); R(79, 45, 5, 1, 1); P(83, 44, 1);
     } else if (mood === 'angry') {
       R(73, 44, 3, 3, 13); R(80, 44, 4, 3, 13); R(73, 44, 3, 1, 2); R(80, 44, 4, 1, 2); P(73, 45, 1); P(80, 45, 1);
@@ -1022,12 +1132,15 @@ body{padding-bottom:84px}
       R(73, 43, 3, 5, 13); R(80, 43, 4, 5, 13); P(73, 45, 1); P(80, 45, 1); P(73, 46, 1); P(80, 46, 1);
     } else {
       R(73, 43, 3, 4, 13); R(80, 43, 4, 4, 13);
-      R(73, 44, 2, 3, 1); R(80, 44, 2, 3, 1); P(74, 44, 13); P(81, 44, 13);
+      const lx = S.look.x > 0 ? 74 : 73, rx = 81 + S.look.x, py = S.look.y < 0 ? 43 : 44;   // olhos seguem o cursor
+      R(lx, py, 2, 3, 1); R(rx, py, 2, 3, 1); P(lx + 1, py, 13); P(rx + 1, py, 13);
     }
     P(77, 48, 9); P(76, 49, 9);                  // nariz
     if (S.frame === 'drink') {
     } else if (mood === 'angry') {                // dentes cerrados
       R(74, 50, 7, 3, 2); R(75, 51, 5, 1, 13); P(77, 51, 9);
+    } else if (S.afk) {                           // boca de sono
+      R(77, 51, 2, 2, 2);
     } else if (mood === 'confused') {             // boca torta
       P(75, 51, 2); R(76, 52, 2, 1, 2); R(78, 51, 2, 1, 2); P(80, 52, 2);
     } else {                                      // sorriso
@@ -1122,7 +1235,7 @@ body{padding-bottom:84px}
     part(() => legs(true), cx);
     part(torso, cx);
     if (!S.phones) part(headphones, cx);
-    const hy = S.frame === 'drink' ? -1 : 0;
+    const hy = S.frame === 'drink' ? -1 : S.afk ? 1 : 0;
     part(head, cx, hy);
     if (S.hooded) part(hood, cx, hy);
     if (S.phones) part(phonesOn, cx);
@@ -1140,6 +1253,13 @@ body{padding-bottom:84px}
       [[46, 66], [53, 64], [61, 65]].forEach(([x, y]) => { P(x + C, y - k, 12); P(x + C + 1, y - 1 - k, 12); });
       if (S.mood === 'normal') [[72, 27], [80, 22], [89, 25]].forEach(([x, y]) => k && P(x + C, y + hy, 12));
     }
+    if (S.afk) part(() => {                                                    // zZz
+      for (let n = 0; n < 3; n++) {
+        const t = (tick + n * 7) % 21, y = 32 - t, x = 94 + n * 2 + (t > 10 ? 1 : 0);
+        ['1111', '..1.', '.1..', '1111'].forEach((row, j) => [...row].forEach((v, i) => v === '1' && P(x + i, y + j, y < 18 ? 9 : 12)));
+      }
+    }, cx);
+    if (S.startle > 0) part(() => { R(96, 20, 2, 5, 13); R(96, 26, 2, 2, 13); }, cx);   // susto
     if (S.mood === 'confused') part(() => {                                       // interrogação
       ['.11.', '1..1', '..1.', '.1..', '....', '.1..'].forEach((row, j) => [...row].forEach((v, i) => v === '1' && P(96 + i, 20 + j, 12)));
     }, cx);
@@ -1207,7 +1327,13 @@ body{padding-bottom:84px}
 
   function drawScreen() {
     L = F;
-    if (S.screen === 'code') {
+    if (S.afk) {                                          // protetor de tela: cadeado quicando
+      R(11, 41, 40, 24, 1);
+      const tri = (t, m) => m - Math.abs((t % (2 * m)) - m);
+      const x = 11 + Math.round(tri(tick * .7, 34)), y = 41 + Math.round(tri(tick * .5, 17));
+      R(x + 1, y, 4, 1, 10); R(x + 1, y + 1, 1, 2, 10); R(x + 4, y + 1, 1, 2, 10);
+      R(x, y + 3, 6, 4, 12); P(x + 2, y + 4, 1); P(x + 3, y + 4, 1); P(x + 2, y + 5, 1);
+    } else if (S.screen === 'code') {
       codeLines(); if (tick % 6 < 3) R(13, 62, 3, 2, 12);
     } else if (S.screen === 'error') {
       const hot = (tick % 6) < 4;
@@ -1270,7 +1396,11 @@ body{padding-bottom:84px}
     g2.putImageData(img, 0, 0);
   }
 
+  // o quarto só anima quando está visível na tela e a aba está aberta
+  let roomVisible = true;
+  new IntersectionObserver(es => { roomVisible = es[0].isIntersecting; }).observe(cv);
   setInterval(() => {
+    if (!roomVisible || document.hidden) return;
     tick++;
     if (S.typing && (S.turbo || tick % 3 === 0)) tap ^= 1;
     if ((S.screen === 'code' || S.screen === 'close') && (S.turbo || tick % 3 === 0)) scroll += S.turbo ? 2 : 1;
@@ -1286,6 +1416,7 @@ body{padding-bottom:84px}
     }
     if (S.mood === 'angry') S.frame = tick % 4 < 2 ? 'raise' : 'type';
     if (ALIEN.phase) stepAlien();
+    if (S.startle > 0) S.startle--;
     if (tick % 5 === 0 && !reduce) { const l = lights[Math.floor(Math.random() * lights.length)]; if (l) l.on = !l.on; }
     render();
   }, 90);
@@ -1302,6 +1433,7 @@ body{padding-bottom:84px}
   };
   function alien() {
     if (ALIEN.phase) return;
+    $('#roomDesc').textContent = 'Um ET de olhos vermelhos aparece na janela, acena e some. Depois um disco voador passa no céu.';
     Object.assign(ALIEN, { phase: 'rise', t: 0 });
     beep([880, 660, 990], .09, 'sine');
   }
@@ -1368,7 +1500,30 @@ body{padding-bottom:84px}
   const dots = document.querySelectorAll('.steps i');
   let state = 0, busy = false, timers = [];
   const later = (fn, ms) => timers.push(setTimeout(fn, ms));
-  const mark = (i, text) => { label.textContent = text; dots.forEach((dd, k) => dd.classList.toggle('on', k === i)); };
+  // descrição falada da cena para quem usa leitor de tela
+  const SCENE = {
+    'digitando': 'Davi está no quarto, à noite, digitando no computador.',
+    'energético aberto': 'Davi pega a lata de energético e bebe.',
+    'modo turbo': 'Davi digita muito rápido, acelerado pelo energético.',
+    'colocando o capuz': 'Davi coloca o capuz do moletom.',
+    'invadindo': 'A tela do computador mostra um carregamento.',
+    'hackeado com sucesso': 'A tela mostra a mensagem: hackeado com sucesso.',
+    'programando': 'Davi está programando.',
+    'erro de sintaxe': 'Aparece um erro de sintaxe na linha 42. Davi fica confuso.',
+    'tentando corrigir': 'Davi tenta corrigir o erro, mas ele aparece de novo.',
+    'irritado': 'Davi fica irritado e soca a mesa.',
+    'fechando o terminal': 'Davi fecha a janela do código.',
+    'abrindo o jogo': 'Davi abre um jogo de tiro e coloca o fone.',
+    'jogando': 'Davi desistiu do código e está jogando.',
+    'dormiu (AFK)': 'Davi dormiu na cadeira.',
+    'acordou!': 'Davi acorda de susto.'
+  };
+  const roomDesc = $('#roomDesc');
+  const mark = (i, text) => {
+    label.textContent = text;
+    dots.forEach((dd, k) => dd.classList.toggle('on', k === i));
+    if (SCENE[text]) roomDesc.textContent = SCENE[text];
+  };
   const BASE_STATE = { frame: 'type', typing: true, turbo: false, hooded: false, screen: 'code', mood: 'normal', phones: false, aim: 0, click: false };
 
   function drinkEnergy() {
@@ -1531,6 +1686,7 @@ body{padding-bottom:84px}
   const killFeed = file => {
     const n = document.createElement('div');
     n.className = 'kill';
+    n.setAttribute('aria-hidden', 'true');
     n.innerHTML = `davi ${CROSS} <b>${file}</b>`;
     pushFeed(n, 3100);
     beep([520], .05);
@@ -1556,7 +1712,11 @@ body{padding-bottom:84px}
     hud.classList.toggle('show', scrollY > 120);
   };
   const addXp = n => { xpBonus += n; updXp(); hp.classList.remove('bump'); void hp.offsetWidth; hp.classList.add('bump'); };
-  addEventListener('scroll', updXp, { passive: true });
+  let xpQueued = false;
+  addEventListener('scroll', () => {
+    if (xpQueued) return; xpQueued = true;
+    requestAnimationFrame(() => { xpQueued = false; updXp(); });
+  }, { passive: true });
   updXp();
 
   /* ---------- janelas: liga, minimiza, fecha, reabre ---------- */
@@ -1592,7 +1752,11 @@ body{padding-bottom:84px}
     wins.forEach(w => w.classList.toggle('active', w === best));
     hudFile.textContent = best ? best.dataset.file : 'quarto.png';
   };
-  addEventListener('scroll', setActive, { passive: true });
+  let activeQueued = false;
+  addEventListener('scroll', () => {
+    if (activeQueued) return; activeQueued = true;
+    requestAnimationFrame(() => { activeQueued = false; setActive(); });
+  }, { passive: true });
   setActive();
 
   wins.forEach(w => {
@@ -1647,16 +1811,175 @@ body{padding-bottom:84px}
     a.classList.remove('shine'); void a.offsetWidth; a.classList.add('shine'); beep([784, 1047], .06);
   }));
 
-  /* ---------- copiar número ---------- */
+  /* ---------- cursor personalizado ---------- */
+  const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const dot = $('#curDot'), ring = $('#curRing');
+  let mx = -100, my = -100, rx = -100, ry = -100, rw = 26, rh = 26, lockEl = null;
+  if (fine) {
+    document.documentElement.classList.add('cur');
+    addEventListener('pointermove', e => {
+      mx = e.clientX; my = e.clientY;
+      dot.classList.remove('hide'); ring.classList.remove('hide');
+    }, { passive: true });
+    document.addEventListener('mouseout', e => { if (!e.relatedTarget) { dot.classList.add('hide'); ring.classList.add('hide'); } });
+    addEventListener('pointerdown', () => ring.classList.add('press'));
+    addEventListener('pointerup', () => ring.classList.remove('press'));
+    document.addEventListener('pointerover', e => {
+      const room = e.target.closest('#roomBtn');
+      const t = room ? null : e.target.closest('a, button, .ach');
+      const isCard = !!(t && (t.classList.contains('card') || t.classList.contains('ach')));
+      lockEl = t && !isCard ? t : null;
+      ring.classList.toggle('aim', !!room); dot.classList.toggle('aim', !!room);
+      ring.classList.toggle('card', isCard); dot.classList.toggle('card', isCard);
+    });
+    let curOn = false;
+    const kick = () => { if (!curOn) { curOn = true; requestAnimationFrame(loop); } };
+    addEventListener('pointermove', kick, { passive: true });
+    addEventListener('scroll', kick, { passive: true });
+    document.addEventListener('pointerover', kick);
+    function loop() {
+      const k = reduce ? 1 : .22;
+      let tx = mx, ty = my, tw = 26, th = 26;
+      if (ring.classList.contains('aim')) { tw = th = 22; }
+      if (lockEl && lockEl.isConnected && !lockEl.hidden) {
+        const r = lockEl.getBoundingClientRect();
+        tx = r.left + r.width / 2; ty = r.top + r.height / 2; tw = r.width + 12; th = r.height + 12;
+      }
+      rx += (tx - rx) * k; ry += (ty - ry) * k; rw += (tw - rw) * k; rh += (th - rh) * k;
+      ring.style.width = rw + 'px'; ring.style.height = rh + 'px';
+      ring.style.transform = `translate3d(${rx - rw / 2}px, ${ry - rh / 2}px, 0)`;
+      dot.style.transform = `translate3d(${mx}px, ${my}px, 0)`;
+      // para o laço quando o anel já chegou no lugar (economiza bateria)
+      const settled = Math.abs(tx - rx) + Math.abs(ty - ry) + Math.abs(tw - rw) + Math.abs(th - rh) < .3;
+      if (settled) { curOn = false; return; }
+      requestAnimationFrame(loop);
+    }
+  } else { dot.remove(); ring.remove(); }
+
+  /* ---------- faíscas no clique/toque ---------- */
+  addEventListener('pointerdown', e => {
+    if (reduce) return;
+    for (let i = 0; i < 6; i++) {
+      const sp = document.createElement('i');
+      const a = i / 6 * Math.PI * 2 + Math.random() * .6, d = 12 + Math.random() * 12;
+      sp.className = 'spark';
+      sp.style.left = e.clientX + 'px'; sp.style.top = e.clientY + 'px';
+      sp.style.setProperty('--dx', Math.cos(a) * d + 'px'); sp.style.setProperty('--dy', Math.sin(a) * d + 'px');
+      document.body.appendChild(sp);
+      setTimeout(() => sp.remove(), 500);
+    }
+  });
+
+  /* ---------- botões magnéticos ---------- */
+  document.querySelectorAll('.btn, .hud-sound').forEach(b => {
+    b.addEventListener('pointermove', e => {
+      if (!fine || reduce) return;
+      const r = b.getBoundingClientRect();
+      b.style.translate = `${((e.clientX - r.left) / r.width - .5) * 10}px ${((e.clientY - r.top) / r.height - .5) * 8}px`;
+    });
+    b.addEventListener('pointerleave', () => { b.style.translate = ''; });
+  });
+
+  /* ---------- o personagem olha para o cursor ---------- */
+  addEventListener('pointermove', e => {
+    const r = cv.getBoundingClientRect();
+    const near = e.clientX > r.left - 240 && e.clientX < r.right + 240 && e.clientY > r.top - 200 && e.clientY < r.bottom + 200;
+    if (!near) { S.look = { x: -1, y: 0 }; return; }
+    const hx = r.left + (82 / W) * r.width, hy = r.top + (45 / H) * r.height;
+    const dx = e.clientX - hx, dy = e.clientY - hy;
+    S.look = { x: dx < -30 ? -1 : dx > 30 ? 1 : 0, y: dy < -40 ? -1 : 0 };
+  }, { passive: true });
+
+  /* ---------- AFK: parado 25s, ele dorme; qualquer ação acorda ---------- */
+  let lastAct = Date.now();
+  const wake = () => {
+    lastAct = Date.now();
+    if (!S.afk) return;
+    S.afk = false; S.typing = true; S.startle = 12;
+    mark(0, 'acordou!');
+    setTimeout(() => { if (state === 0 && !S.afk) mark(0, 'digitando'); }, 1600);
+    setActive();
+  };
+  ['pointermove', 'pointerdown', 'keydown', 'scroll', 'touchstart'].forEach(ev => addEventListener(ev, wake, { passive: true }));
+  setInterval(() => {
+    if (S.afk || busy || state !== 0 || ALIEN.phase || document.hidden) return;
+    if (Date.now() - lastAct > 25000) {
+      S.afk = true; S.typing = false;
+      mark(0, 'dormiu (AFK)');
+      hudFile.textContent = 'AFK';
+    }
+  }, 1000);
+
+  /* ---------- título da aba quando a pessoa sai ---------- */
+  const baseTitle = document.title;
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) document.title = 'Ei, volta aqui! | Davi Felipe';
+    else { document.title = baseTitle; if (seen.size) killFeed('voltou'); }
+  });
+
+  /* ---------- palavras secretas: "hack" e "ovni" ---------- */
+  let typedKeys = '', rainDone = false;
+  function matrixRain() {
+    if (document.querySelector('.rain')) return;
+    const c = document.createElement('canvas'), x = c.getContext('2d');
+    c.className = 'rain'; c.width = innerWidth; c.height = innerHeight;
+    document.body.appendChild(c);
+    const size = 16, cols = Math.ceil(c.width / size), drops = Array.from({ length: cols }, () => Math.random() * -40);
+    const t0 = performance.now();
+    (function frame(now) {
+      x.fillStyle = 'rgba(14,17,19,.18)'; x.fillRect(0, 0, c.width, c.height);
+      x.font = `${size}px Silkscreen, monospace`;
+      drops.forEach((d, i) => {
+        x.fillStyle = Math.random() > .95 ? '#e7eaec' : '#3dff6e';
+        x.fillText(Math.random() > .5 ? '1' : '0', i * size, d * size);
+        drops[i] = d * size > c.height && Math.random() > .96 ? 0 : d + 1;
+      });
+      if (now - t0 < 2600) requestAnimationFrame(frame);
+      else { c.style.opacity = 0; setTimeout(() => c.remove(), 650); }
+    })(t0);
+    beep([220, 330, 440, 660, 880], .06);
+    if (!rainDone) {
+      rainDone = true;
+      setTimeout(() => { achToast('Código secreto: hack', CROSS.replace('<svg', '<svg style="color:#3dff6e"')); addXp(200); }, 900);
+    }
+  }
+  addEventListener('keydown', e => {
+    if (e.key.length !== 1 || e.ctrlKey || e.metaKey || e.altKey) return;
+    typedKeys = (typedKeys + e.key.toLowerCase()).slice(-6);
+    if (typedKeys.endsWith('hack')) { typedKeys = ''; matrixRain(); }
+    else if (typedKeys.endsWith('ovni')) { typedKeys = ''; alien(); }
+  });
+
+  /* ---------- número protegido contra robôs ---------- */
+  // o número não aparece no HTML: é montado só quando uma pessoa clica
+  const phoneDigits = () => '22604779953' .split('').reverse().join('') ;
+  const phoneFmt = () => { const d = phoneDigits(); return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`; };
   const toast = $('#toast');
   let toastT;
   const show = msg => {
     toast.textContent = msg; toast.classList.add('show');
     clearTimeout(toastT); toastT = setTimeout(() => toast.classList.remove('show'), 2200);
   };
+  const showBtn = $('#showPhone');
+  showBtn.addEventListener('click', () => {
+    if (showBtn.dataset.open) {
+      window.open('https://wa.me/55' + phoneDigits(), '_blank', 'noopener,noreferrer');
+      return;
+    }
+    $('#phoneText').textContent = phoneFmt();
+    showBtn.dataset.open = '1';
+    showBtn.textContent = 'Abrir no WhatsApp';
+  });
   $('#copyPhone').addEventListener('click', async () => {
-    try { await navigator.clipboard.writeText('35997740622'); show('Número copiado'); }
-    catch { show('(35) 99774-0622'); }
+    try { await navigator.clipboard.writeText(phoneDigits()); show('Número copiado'); }
+    catch (e) { $('#phoneText').textContent = phoneFmt(); show(phoneFmt()); }
+  });
+
+  /* ---------- links externos avisam que abrem em nova aba ---------- */
+  document.querySelectorAll('a[target="_blank"]').forEach(a => {
+    const sr = document.createElement('span');
+    sr.className = 'sr-only'; sr.textContent = ' (abre em nova aba)';
+    a.appendChild(sr);
   });
 })();
 </script>
